@@ -232,15 +232,44 @@ func (p *processor) extractGroupVersionIfExists(collector *markers.Collector, pk
 		return nil
 	}
 
-	groupName := markerValues.Get("groupName")
+	groupNameTag := "groupName"
+	versionNameTag := "versionName"
+	if pkgMeta, exists := p.includePackages[pkg.PkgPath]; exists {
+		if pkgMeta.GroupNameTag != "" {
+			groupNameTag = pkgMeta.GroupNameTag
+		}
+		if pkgMeta.GroupVersionTag != "" {
+			versionNameTag = pkgMeta.GroupVersionTag
+		}
+	}
+
+	groupName := markerValues.Get(groupNameTag)
 	if groupName == nil {
 		return nil
 	}
 
 	version := pkg.Name
-	if v := markerValues.Get("versionName"); v != nil {
+	v := markerValues.Get(versionNameTag)
+	if v != nil {
 		version = v.(string)
 	}
+
+	//groupName := markerValues.Get("groupName")
+	//if groupName == nil {
+	//	if groupName = markerValues.Get("mygroup"); groupName == nil {
+	//		return nil
+	//	}
+	//}
+	//
+	//version := pkg.Name
+	//v := markerValues.Get("versionName")
+	//if v == nil {
+	//	if v = markerValues.Get("myversion"); v != nil {
+	//		version = v.(string)
+	//	}
+	//} else {
+	//	version = v.(string)
+	//}
 
 	gvInfo := &groupVersionInfo{
 		GroupVersion: schema.GroupVersion{
@@ -517,7 +546,7 @@ func mkRegistry(customMarkers []config.Marker) (*markers.Registry, error) {
 			continue
 		}
 
-		if err := registry.Define(marker.Name, t, struct{}{}); err != nil {
+		if err := registry.Define(marker.Name, t, ""); err != nil {
 			return nil, fmt.Errorf("failed to define custom marker %s: %w", marker.Name, err)
 		}
 	}

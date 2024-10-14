@@ -29,18 +29,24 @@ type Config struct {
 	Flags     `json:"-"`
 }
 
+type PkgMeta struct {
+	GroupNameTag    string `json:"groupNameTag"`
+	GroupVersionTag string `json:"groupVersionTag"`
+}
+
 type ProcessorConfig struct {
-	MaxDepth            int      `json:"maxDepth"`
-	IgnoreTypes         []string `json:"ignoreTypes"`
-	IgnoreFields        []string `json:"ignoreFields"`
-	IgnoreGroupVersions []string `json:"ignoreGroupVersions"`
-	UseRawDocstring     bool     `json:"useRawDocstring"`
-	CustomMarkers       []Marker `json:"customMarkers"`
+	MaxDepth            int                `json:"maxDepth"`
+	IgnoreTypes         []string           `json:"ignoreTypes"`
+	IgnoreFields        []string           `json:"ignoreFields"`
+	IgnoreGroupVersions []string           `json:"ignoreGroupVersions"`
+	UseRawDocstring     bool               `json:"useRawDocstring"`
+	CustomMarkers       []Marker           `json:"customMarkers"`
+	IncludePackages     map[string]PkgMeta `json:"includePackages"`
 }
 
 type Marker struct {
-	Name   string
-	Target TargetType
+	Name   string     `json:"name"`
+	Target TargetType `json:"target"`
 }
 
 type TargetType string
